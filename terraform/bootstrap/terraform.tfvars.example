@@ -1,0 +1,8 @@
+platform_project_id    = "prj-platform-prod"
+create_platform_project = false
+region                 = "us-west1"
+github_owner           = "your-github-org"
+github_repository      = "gke-cluster-factory"
+cluster_folder_id      = "123456789012"
+billing_account        = "000000-000000-000000"
+shared_vpc_host_project_id = "prj-network-prod"

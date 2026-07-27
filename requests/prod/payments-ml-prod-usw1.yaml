@@ -1,0 +1,83 @@
+apiVersion: platform.example.com/v1alpha1
+kind: GKEClusterRequest
+metadata:
+  name: payments-ml-prod-usw1
+  created_at: '2026-07-20T00:00:00Z'
+  created_by: platform-demo@example.com
+  labels:
+    environment: prod
+    team: payments-ml
+spec:
+  name: payments-ml-prod-usw1
+  project_id: prj-payments-ml-prod
+  blueprint: standard-prod-h100-v1
+  environment: prod
+  region: us-west1
+  owner:
+    team: payments-ml
+    google_group: gcp-payments-ml@example.com
+    cost_center: cc-1042
+    technical_contact: ml-platform@example.com
+  workload:
+    data_classification: confidential
+    exposure: internal
+    description: Production model inference and controlled fine-tuning workloads.
+  capacity:
+    system_min_nodes: 3
+    system_max_nodes: 9
+    general_min_nodes: 3
+    general_max_nodes: 60
+    max_pods_per_node: 64
+  gpu:
+    enabled: true
+    model: nvidia-h100-80gb
+    machine_type: a3-highgpu-8g
+    accelerator_count: 8
+    minimum_nodes: 1
+    maximum_nodes: 4
+    zones: [us-west1-a, us-west1-b]
+    provisioning_model: reservation
+    reservation_name: payments-h100-prod
+  availability:
+    tier: regional-ha
+    application_minimum_replicas: 3
+    secondary_region: null
+  backup:
+    tier: gold
+    retention_days: 90
+    delete_lock_days: 7
+    target_rpo_minutes: 60
+    include_volume_data: true
+    include_secrets: true
+  network:
+    mode: dedicated
+    host_project_id: null
+    network_name: gke-platform
+    create_nat: true
+    private_endpoint_only: true
+    authorized_cidrs: []
+  lifecycle:
+    deletion_protection: true
+    expiration_date: null
+  labels:
+    application: payments-ml
+    data-classification: confidential
+    managed-by: gke-cluster-factory
+resolved:
+  network:
+    node_cidr: 10.64.0.0/24
+    pod_cidr: 10.128.0.0/16
+    service_cidr: 172.20.0.0/20
+    control_plane_cidr: 172.24.0.0/28
+    subnet_name: snet-payments-ml-prod-9d9e93
+    pod_range_name: pods-payments-ml-prod-9d9e93
+    service_range_name: svc-payments-ml-prod-9d9e93
+status:
+  phase: REQUESTED
+  conditions:
+    - type: SchemaValid
+      status: 'True'
+      last_transition_time: '2026-07-20T00:00:00Z'
+    - type: PolicyValid
+      status: 'True'
+      last_transition_time: '2026-07-20T00:00:00Z'
