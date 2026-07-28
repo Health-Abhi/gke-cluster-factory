@@ -105,6 +105,8 @@ module "gke" {
   owner_group           = var.owner_group
   platform_admin_group  = var.platform_admin_group
   gke_security_group    = var.gke_security_group
+  iam_principal_type        = var.iam_principal_type
+  enable_google_groups_rbac = var.enable_google_groups_rbac
   labels                = local.common_labels
   max_pods_per_node     = var.capacity.max_pods_per_node
   system_machine_type   = var.system_machine_type

@@ -6,6 +6,9 @@ access:
   team: application-team
   ownerGroup: application-team@example.com
   platformAdminGroup: gke-platform-admins@example.com
+  # "Group" for real Google Groups (Cloud Identity/Workspace + Google Groups RBAC enabled),
+  # "User" for an individual account (e.g. personal Gmail with no org).
+  iamPrincipalType: Group
 gitops:
   repoURL: https://github.com/example/gke-cluster-factory.git
 namespace:

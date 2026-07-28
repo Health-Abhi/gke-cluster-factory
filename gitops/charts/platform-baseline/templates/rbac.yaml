@@ -4,7 +4,7 @@ metadata:
   name: application-team-admins
   namespace: {{ include "baseline.teamName" . }}
 subjects:
-  - kind: Group
+  - kind: {{ .Values.access.iamPrincipalType }}
     apiGroup: rbac.authorization.k8s.io
     name: {{ .Values.access.ownerGroup | quote }}
 roleRef:
@@ -17,7 +17,7 @@ kind: ClusterRoleBinding
 metadata:
   name: platform-administrators
 subjects:
-  - kind: Group
+  - kind: {{ .Values.access.iamPrincipalType }}
     apiGroup: rbac.authorization.k8s.io
     name: {{ .Values.access.platformAdminGroup | quote }}
 roleRef:

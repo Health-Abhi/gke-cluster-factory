@@ -35,37 +35,37 @@ resource "google_project_iam_member" "node_roles" {
 resource "google_project_iam_member" "owner_cluster_viewer" {
   project = var.project_id
   role    = "roles/container.clusterViewer"
-  member  = "group:${var.owner_group}"
+  member  = "${var.iam_principal_type}:${var.owner_group}"
 }
 
 resource "google_project_iam_member" "owner_gateway_reader" {
   project = var.project_id
   role    = "roles/gkehub.gatewayReader"
-  member  = "group:${var.owner_group}"
+  member  = "${var.iam_principal_type}:${var.owner_group}"
 }
 
 resource "google_project_iam_member" "owner_gateway_admin" {
   project = var.project_id
   role    = "roles/gkehub.gatewayAdmin"
-  member  = "group:${var.owner_group}"
+  member  = "${var.iam_principal_type}:${var.owner_group}"
 }
 
 resource "google_project_iam_member" "platform_admin_cluster_viewer" {
   project = var.project_id
   role    = "roles/container.clusterViewer"
-  member  = "group:${var.platform_admin_group}"
+  member  = "${var.iam_principal_type}:${var.platform_admin_group}"
 }
 
 resource "google_project_iam_member" "platform_admin_gateway_reader" {
   project = var.project_id
   role    = "roles/gkehub.gatewayReader"
-  member  = "group:${var.platform_admin_group}"
+  member  = "${var.iam_principal_type}:${var.platform_admin_group}"
 }
 
 resource "google_project_iam_member" "platform_admin_gateway_admin" {
   project = var.project_id
   role    = "roles/gkehub.gatewayAdmin"
-  member  = "group:${var.platform_admin_group}"
+  member  = "${var.iam_principal_type}:${var.platform_admin_group}"
 }
 
 resource "google_project_service_identity" "gke_backup" {
@@ -134,8 +134,11 @@ resource "google_container_cluster" "this" {
     workload_pool = "${var.project_id}.svc.id.goog"
   }
 
-  authenticator_groups_config {
-    security_group = var.gke_security_group
+  dynamic "authenticator_groups_config" {
+    for_each = var.enable_google_groups_rbac ? [1] : []
+    content {
+      security_group = var.gke_security_group
+    }
   }
 
   cost_management_config {

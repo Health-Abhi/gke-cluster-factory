@@ -24,6 +24,8 @@ spec:
           value: __TEAM__
         - name: access.platformAdminGroup
           value: __PLATFORM_ADMIN_GROUP__
+        - name: access.iamPrincipalType
+          value: __IAM_PRINCIPAL_TYPE__
         - name: environment
           value: __ENVIRONMENT__
         - name: workloadExposure

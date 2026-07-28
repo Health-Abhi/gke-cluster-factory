@@ -81,6 +81,8 @@ def render(document: dict[str, Any], root: Path) -> dict[str, Any]:
         "backup": normalized["backup"],
         "deletion_protection": normalized["lifecycle"]["deletion_protection"],
         "release_channel": catalog.get("default_release_channel", "REGULAR"),
+        "iam_principal_type": os.environ.get("IAM_PRINCIPAL_TYPE", "group"),
+        "enable_google_groups_rbac": os.environ.get("ENABLE_GOOGLE_GROUPS_RBAC", "true").lower() == "true",
     }
 
 

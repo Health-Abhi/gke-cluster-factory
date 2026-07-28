@@ -14,6 +14,20 @@ variable "deletion_protection" { type = bool }
 variable "owner_group" { type = string }
 variable "platform_admin_group" { type = string }
 variable "gke_security_group" { type = string }
+variable "iam_principal_type" {
+  description = "IAM principal prefix for owner_group/platform_admin_group bindings: \"group\" for real Google Groups (Cloud Identity/Workspace), \"user\" for an individual account (e.g. personal Gmail with no org)."
+  type        = string
+  default     = "group"
+  validation {
+    condition     = contains(["group", "user"], var.iam_principal_type)
+    error_message = "iam_principal_type must be \"group\" or \"user\"."
+  }
+}
+variable "enable_google_groups_rbac" {
+  description = "Enable GKE's Google Groups for RBAC (authenticator_groups_config). Requires a Cloud Identity/Workspace domain — set false for personal/non-org projects."
+  type        = bool
+  default     = true
+}
 variable "labels" { type = map(string) }
 variable "max_pods_per_node" { type = number }
 variable "system_machine_type" { type = string }
