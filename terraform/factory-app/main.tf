@@ -125,7 +125,7 @@ resource "google_iap_web_cloud_run_service_iam_member" "portal_user" {
   location               = var.region
   cloud_run_service_name = google_cloud_run_v2_service.portal.name
   role                   = "roles/iap.httpsResourceAccessor"
-  member                 = "group:${var.invoker_group}"
+  member                 = "${var.iam_principal_type}:${var.invoker_group}"
 
   depends_on = [google_cloud_run_v2_service_iam_member.iap_invoker]
 }
