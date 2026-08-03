@@ -22,4 +22,4 @@ jobs:
 
       - name: Create bucket
         run: |
-          gsutil mb -p YOUR_PROJECT_ID -l us-central1 gs://your-unique-bucket-name-$(date +%s)/
+          gsutil mb -p gcpproject-490711 -l us-central1 gs://your-unique-bucket-name-$(date +%s)/
