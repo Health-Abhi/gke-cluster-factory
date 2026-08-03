@@ -5,7 +5,6 @@ set -euo pipefail
 GITOPS_REVISION=${GITOPS_REVISION:-main}
 : "${PLATFORM_ADMIN_GROUP:?Set PLATFORM_ADMIN_GROUP to the Google group for platform administrators}"
 ARGOCD_VERSION=${ARGOCD_VERSION:-v3.4.4}
-IAM_PRINCIPAL_TYPE=${IAM_PRINCIPAL_TYPE:-Group}
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 REQUEST_FILE=${REQUEST_FILE:-}
 
@@ -34,7 +33,7 @@ else
   WORKLOAD_EXPOSURE=${WORKLOAD_EXPOSURE:-internal}
 fi
 
-export GITOPS_REPO_URL GITOPS_REVISION CLUSTER_NAME OWNER_GROUP TEAM ENVIRONMENT WORKLOAD_EXPOSURE PLATFORM_ADMIN_GROUP IAM_PRINCIPAL_TYPE
+export GITOPS_REPO_URL GITOPS_REVISION CLUSTER_NAME OWNER_GROUP TEAM ENVIRONMENT WORKLOAD_EXPOSURE PLATFORM_ADMIN_GROUP
 
 kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
 kubectl apply -n argocd -f "https://raw.githubusercontent.com/argoproj/argo-cd/${ARGOCD_VERSION}/manifests/install.yaml"
@@ -66,7 +65,6 @@ replacements = {
     "__ENVIRONMENT__": os.environ["ENVIRONMENT"],
     "__PLATFORM_ADMIN_GROUP__": os.environ["PLATFORM_ADMIN_GROUP"],
     "__WORKLOAD_EXPOSURE__": os.environ["WORKLOAD_EXPOSURE"],
-    "__IAM_PRINCIPAL_TYPE__": os.environ.get("IAM_PRINCIPAL_TYPE", "Group"),
 }
 for key, value in replacements.items():
     content = content.replace(key, value)
