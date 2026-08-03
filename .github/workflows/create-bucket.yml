@@ -4,13 +4,17 @@ on:
   workflow_dispatch:
     inputs:
       bucket_name:
-        description: 'Name of the GCS bucket to create'
+        description: 'Bucket purpose/name'
         required: true
         type: string
 
+env:
+  PROJECT_NAME: "gcp-project"   # hardcoded
+  LOCATION: "us-central1"              # hardcoded — used in both name and -l flag
+
 permissions:
   contents: read
-  id-token: write   # required for OIDC token exchange
+  id-token: write
 
 jobs:
   create-bucket:
@@ -27,4 +31,10 @@ jobs:
 
       - name: Create bucket
         run: |
-          gsutil mb -p gcpproject-490711 -l us-central1 gs://${{ inputs.bucket_name }}/
+          RAW_NAME="${PROJECT_NAME}-${LOCATION}-${{ inputs.bucket_name }}"
+          LOWER_NAME=$(echo "$RAW_NAME" | tr '[:upper:]' '[:lower:]')
+          CLEAN_NAME=$(echo "$LOWER_NAME" | tr ' _' '-' | tr -s '-')
+          FINAL_NAME=$(echo "$CLEAN_NAME" | sed 's/[^a-z0-9-]//g')
+
+          echo "Final bucket name: $FINAL_NAME"
+          gsutil mb -p gcpproject-490711 -l ${LOCATION} gs://${FINAL_NAME}/
