@@ -74,7 +74,7 @@ resolved:
     pod_range_name: pods-test-dev-usw1-0cafb7
     service_range_name: svc-test-dev-usw1-0cafb7
 status:
-  phase: REQUESTED
+  phase: FAILED
   conditions:
   - type: SchemaValid
     status: 'True'
@@ -82,3 +82,8 @@ status:
   - type: PolicyValid
     status: 'True'
     last_transition_time: '2026-08-03T11:39:12.966597Z'
+  - type: Reconciled
+    status: 'False'
+    last_transition_time: '2026-08-04T09:57:03.886258Z'
+    message: Reconciliation failed. Review the GitHub Actions run and cloud operation
+      logs.
