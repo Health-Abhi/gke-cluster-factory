@@ -84,6 +84,6 @@ status:
     last_transition_time: '2026-08-03T11:39:12.966597Z'
   - type: Reconciled
     status: 'False'
-    last_transition_time: '2026-08-04T09:57:03.886258Z'
+    last_transition_time: '2026-08-04T10:17:23.105040Z'
     message: Reconciliation failed. Review the GitHub Actions run and cloud operation
       logs.
