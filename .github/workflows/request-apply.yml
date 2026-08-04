@@ -66,6 +66,8 @@ jobs:
           GITOPS_TOKEN: ${{ secrets.ARGOCD_GIT_TOKEN }}
           GKE_SECURITY_GROUP: ${{ vars.GKE_SECURITY_GROUP }}
           PLATFORM_ADMIN_GROUP: ${{ vars.PLATFORM_ADMIN_GROUP }}
+          IAM_PRINCIPAL_TYPE: ${{ vars.IAM_PRINCIPAL_TYPE }}
+          ENABLE_GOOGLE_GROUPS_RBAC: ${{ vars.ENABLE_GOOGLE_GROUPS_RBAC }}
         run: |
           set -euo pipefail
 
@@ -109,7 +111,7 @@ jobs:
               cluster=$(python -c 'import sys,yaml; print(yaml.safe_load(open(sys.argv[1]))["metadata"]["name"])' "$request")
               project=$(python -c 'import sys,yaml; print(yaml.safe_load(open(sys.argv[1]))["spec"]["project_id"])' "$request")
               region=$(python -c 'import sys,yaml; print(yaml.safe_load(open(sys.argv[1]))["spec"]["region"])' "$request")
-              tfvars=$(mktemp)
+              tfvars=$(mktemp --suffix=.json)
               trap 'rm -f "$tfvars"' EXIT
               ./scripts/render_tfvars.py "$request" --output "$tfvars"
 

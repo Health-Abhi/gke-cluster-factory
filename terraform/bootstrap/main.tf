@@ -160,6 +160,17 @@ resource "google_folder_iam_member" "github_actions_cluster_folder_roles" {
   member = "serviceAccount:${google_service_account.github_actions.email}"
 }
 
+# When no folder is configured (standalone/personal projects with no org hierarchy),
+# grant the same cluster-building roles directly on the platform project instead,
+# since clusters in that case are provisioned in this same project.
+resource "google_project_iam_member" "github_actions_cluster_project_roles" {
+  for_each = var.cluster_folder_id == null ? setsubtract(local.folder_roles, ["roles/resourcemanager.projectCreator"]) : toset([])
+
+  project = var.platform_project_id
+  role    = each.value
+  member  = "serviceAccount:${google_service_account.github_actions.email}"
+}
+
 resource "google_billing_account_iam_member" "github_actions_billing_user" {
   count = var.billing_account == null ? 0 : 1
 

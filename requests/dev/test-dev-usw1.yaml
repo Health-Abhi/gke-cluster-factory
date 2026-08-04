@@ -1,0 +1,84 @@
+apiVersion: platform.example.com/v1alpha1
+kind: GKEClusterRequest
+metadata:
+  name: test-dev-usw1
+  created_at: '2026-08-03T11:39:12.966509Z'
+  created_by: ancyrusansh@gmail.com
+  labels:
+    environment: dev
+    team: platform-test
+spec:
+  name: test-dev-usw1
+  project_id: gcpproject-490711
+  blueprint: standard-dev-v1
+  environment: dev
+  region: us-west1
+  owner:
+    team: platform-test
+    google_group: ancyrusansh@gmail.com
+    cost_center: trial
+    technical_contact: ancyrusansh@gmail.com
+  workload:
+    data_classification: internal
+    exposure: internal
+    description: Trial-account pipeline test cluster.
+  capacity:
+    system_min_nodes: 1
+    system_max_nodes: 3
+    general_min_nodes: 0
+    general_max_nodes: 3
+    max_pods_per_node: 32
+  gpu:
+    enabled: false
+    model: null
+    machine_type: null
+    accelerator_count: 0
+    minimum_nodes: 0
+    maximum_nodes: 0
+    zones: []
+    provisioning_model: standard
+    reservation_name: null
+  availability:
+    tier: single-zone
+    application_minimum_replicas: 1
+    secondary_region: null
+  backup:
+    tier: bronze
+    retention_days: 7
+    delete_lock_days: 0
+    target_rpo_minutes: 1440
+    include_volume_data: false
+    include_secrets: false
+  network:
+    mode: dedicated
+    host_project_id: null
+    network_name: gke-platform
+    create_nat: true
+    private_endpoint_only: true
+    authorized_cidrs: []
+  lifecycle:
+    deletion_protection: false
+    expiration_date: null
+  labels:
+    environment: dev
+    team: platform-test
+    cost-center: trial
+    managed-by: gke-cluster-factory
+resolved:
+  network:
+    node_cidr: 10.64.1.0/24
+    pod_cidr: 10.129.0.0/16
+    service_cidr: 172.20.16.0/20
+    control_plane_cidr: 172.24.0.16/28
+    subnet_name: snet-test-dev-usw1-0cafb7
+    pod_range_name: pods-test-dev-usw1-0cafb7
+    service_range_name: svc-test-dev-usw1-0cafb7
+status:
+  phase: REQUESTED
+  conditions:
+  - type: SchemaValid
+    status: 'True'
+    last_transition_time: '2026-08-03T11:39:12.966594Z'
+  - type: PolicyValid
+    status: 'True'
+    last_transition_time: '2026-08-03T11:39:12.966597Z'
