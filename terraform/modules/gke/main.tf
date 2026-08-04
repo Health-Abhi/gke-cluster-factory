@@ -166,7 +166,7 @@ resource "google_container_cluster" "this" {
   }
 
   dynamic "master_authorized_networks_config" {
-    for_each = var.private_endpoint_only ? [] : [1]
+    for_each = [1]
     content {
       gcp_public_cidrs_access_enabled = false
       dynamic "cidr_blocks" {
