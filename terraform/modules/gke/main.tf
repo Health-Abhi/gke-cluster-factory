@@ -94,10 +94,16 @@ resource "google_kms_crypto_key_iam_member" "gke_service_agent" {
   member        = "serviceAccount:${local.gke_service_agent}"
 }
 
+resource "time_sleep" "gke_backup_service_agent_propagation" {
+  create_duration = "30s"
+  depends_on      = [google_project_service_identity.gke_backup]
+}
+
 resource "google_kms_crypto_key_iam_member" "gke_backup_service_agent" {
   crypto_key_id = google_kms_crypto_key.gke.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
   member        = "serviceAccount:${google_project_service_identity.gke_backup.email}"
+  depends_on    = [time_sleep.gke_backup_service_agent_propagation]
 }
 
 resource "google_container_cluster" "this" {
