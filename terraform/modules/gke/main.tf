@@ -333,7 +333,7 @@ resource "google_container_node_pool" "system" {
     machine_type    = var.system_machine_type
     image_type      = "COS_CONTAINERD"
     disk_type       = "pd-balanced"
-    disk_size_gb    = 100
+    disk_size_gb    = 30
     service_account = google_service_account.nodes.email
     oauth_scopes    = ["https://www.googleapis.com/auth/cloud-platform"]
 
@@ -396,7 +396,7 @@ resource "google_container_node_pool" "general" {
     machine_type    = var.general_machine_type
     image_type      = "COS_CONTAINERD"
     disk_type       = "pd-balanced"
-    disk_size_gb    = 100
+    disk_size_gb    = 30
     service_account = google_service_account.nodes.email
     oauth_scopes    = ["https://www.googleapis.com/auth/cloud-platform"]
 
