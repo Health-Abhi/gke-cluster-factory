@@ -76,7 +76,7 @@ resolved:
     pod_range_name: pods-new-demo-cluster-371db8
     service_range_name: svc-new-demo-cluster-371db8
 status:
-  phase: REQUESTED
+  phase: READY
   conditions:
   - type: SchemaValid
     status: 'True'
@@ -84,3 +84,7 @@ status:
   - type: PolicyValid
     status: 'True'
     last_transition_time: '2026-08-08T22:23:58.113136Z'
+  - type: Reconciled
+    status: 'True'
+    last_transition_time: '2026-08-08T22:39:41.969510Z'
+    message: Infrastructure and GitOps baseline reconciled
