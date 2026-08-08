@@ -36,6 +36,22 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     environment: str = "development"
 
+    # Local provisioning (portal-triggered "Provision" button). Only used in
+    # storage_mode=local, as a convenience alternative to running the
+    # GitHub Actions plan/apply pipeline by hand.
+    enable_local_provisioning: bool = False
+    terraform_binary: str = "terraform"
+    gcloud_binary: str = "gcloud"
+    tf_state_bucket: str | None = None
+    create_cluster_projects: bool = False
+    cluster_project_parent: str | None = None
+    billing_account: str | None = None
+    gke_security_group: str | None = None
+    platform_admin_group: str | None = None
+    iam_principal_type: str = "group"
+    enable_google_groups_rbac: bool = True
+    skip_preflight: bool = False
+
     @field_validator("allowed_origins", mode="before")
     @classmethod
     def parse_origins(cls, value: object) -> object:

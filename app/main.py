@@ -138,3 +138,32 @@ async def list_requests(service: Service, _: Protected) -> list[RequestSummary]:
         return await service.summaries()
     except GitHubError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+
+@app.get("/api/v1/config", tags=["config"])
+async def config_flags(service: Service, _: Protected) -> dict:
+    return {
+        "storage_mode": service.settings.storage_mode,
+        "local_provisioning_enabled": (
+            service.settings.enable_local_provisioning and service.settings.storage_mode == "local"
+        ),
+    }
+
+
+@app.post("/api/v1/requests/{name}/provision", status_code=202, tags=["requests"])
+async def provision_request(name: str, service: Service, _: Protected) -> dict:
+    try:
+        service.start_provision(name)
+    except RequestValidationError as exc:
+        raise HTTPException(status_code=400, detail={"errors": exc.errors}) from exc
+    except RuntimeError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    return {"name": name, "status": "started"}
+
+
+@app.get("/api/v1/requests/{name}/provision", tags=["requests"])
+async def provision_status(name: str, service: Service, _: Protected) -> dict:
+    status_payload = service.provision_status(name)
+    if status_payload is None:
+        raise HTTPException(status_code=404, detail=f"No provisioning job found for {name}")
+    return status_payload

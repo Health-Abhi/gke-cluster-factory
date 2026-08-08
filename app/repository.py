@@ -35,6 +35,16 @@ class LocalRequestRepository:
                 return record
         return None
 
+    def get_record_path(self, name: str) -> Path | None:
+        for path in sorted(self.base_dir.glob("*/*.yaml")):
+            try:
+                record = yaml.safe_load(path.read_text(encoding="utf-8"))
+            except (OSError, yaml.YAMLError):
+                continue
+            if isinstance(record, dict) and record.get("metadata", {}).get("name") == name:
+                return path
+        return None
+
     def write_record(self, environment: str, name: str, yaml_text: str) -> Path:
         directory = self.base_dir / environment
         directory.mkdir(parents=True, exist_ok=True)

@@ -1,4 +1,4 @@
-const state = { catalog: null, requests: [], page: 'overview' }
+const state = { catalog: null, requests: [], page: 'overview', config: null, pollTimer: null }
 
 const $ = (selector, root = document) => root.querySelector(selector)
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)]
@@ -91,6 +91,16 @@ function filteredRequests() {
   })
 }
 
+function provisionButtonCell(item) {
+  if (!state.config?.local_provisioning_enabled) return '<td><small>—</small></td>'
+  const status = String(item.status || '').toUpperCase()
+  if (status === 'PROVISIONING') {
+    return `<td><button class="button secondary small" data-view-log="${escapeHtml(item.name)}">View log</button></td>`
+  }
+  const label = status === 'READY' ? 'Re-provision' : status === 'FAILED' ? 'Retry provision' : 'Provision'
+  return `<td><button class="button primary small" data-provision="${escapeHtml(item.name)}">${label}</button></td>`
+}
+
 function renderRequestTable() {
   const rows = filteredRequests()
   const body = $('#requestTable')
@@ -104,9 +114,53 @@ function renderRequestTable() {
       <td>${item.gpu_enabled ? '<span class="gpu-pill">H100</span>' : 'CPU'}</td>
       <td><span class="status ${statusClass(item.status)}">${escapeHtml(item.status)}</span></td>
       <td>${formatDate(item.created_at)}</td>
+      ${provisionButtonCell(item)}
     </tr>`).join('')
   empty.classList.toggle('hidden', rows.length > 0)
   $('.table-wrap').classList.toggle('hidden', rows.length === 0)
+}
+
+function openProvisionDialog(name) {
+  $('#provisionClusterName').textContent = name
+  $('#provisionLog').textContent = ''
+  $('#provisionDialog').showModal()
+  pollProvision(name)
+}
+
+async function triggerProvision(name) {
+  try {
+    await api(`/api/v1/requests/${encodeURIComponent(name)}/provision`, { method: 'POST' })
+    toast(`Provisioning started for ${name}`)
+    openProvisionDialog(name)
+    await loadRequests()
+  } catch (error) {
+    toast(`Could not start provisioning: ${error.message}`, true)
+  }
+}
+
+function pollProvision(name) {
+  clearInterval(state.pollTimer)
+  const tick = async () => {
+    try {
+      const job = await api(`/api/v1/requests/${encodeURIComponent(name)}/provision`)
+      const pre = $('#provisionLog')
+      pre.textContent = job.logs.join('\n')
+      pre.scrollTop = pre.scrollHeight
+      if (job.status !== 'running') {
+        clearInterval(state.pollTimer)
+        $('#provisionSubtitle').textContent = job.status === 'succeeded'
+          ? 'Provisioning finished successfully.'
+          : 'Provisioning failed. Review the log above.'
+        toast(job.status === 'succeeded' ? `${name} is ready` : `${name} provisioning failed`, job.status !== 'succeeded')
+        await loadRequests()
+      }
+    } catch (error) {
+      clearInterval(state.pollTimer)
+      toast(`Lost track of provisioning job: ${error.message}`, true)
+    }
+  }
+  tick()
+  state.pollTimer = setInterval(tick, 2000)
 }
 
 async function loadRequests(showMessage = false) {
@@ -309,6 +363,16 @@ function wireEvents() {
     if (email) localStorage.setItem('factory-user', email)
     toast(`Local identity set to ${email}`)
   })
+  $('#requestTable').addEventListener('click', event => {
+    const provisionName = event.target.dataset.provision
+    const viewName = event.target.dataset.viewLog
+    if (provisionName) triggerProvision(provisionName)
+    else if (viewName) openProvisionDialog(viewName)
+  })
+  $('#closeProvisionDialog').addEventListener('click', () => {
+    clearInterval(state.pollTimer)
+    $('#provisionDialog').close()
+  })
 }
 
 async function start() {
@@ -319,6 +383,11 @@ async function start() {
     renderCatalog()
   } catch (error) {
     toast(`Could not load blueprint catalog: ${error.message}`, true)
+  }
+  try {
+    state.config = await api('/api/v1/config')
+  } catch (error) {
+    state.config = { local_provisioning_enabled: false }
   }
   await loadRequests()
 }

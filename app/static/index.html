@@ -108,7 +108,7 @@
 
       <section id="page-requests" class="page">
         <div class="page-heading"><div><span class="eyebrow">LIFECYCLE</span><h1>Cluster requests</h1><p>Track ownership, approval, provisioning, and handoff.</p></div><div><button class="button secondary" id="refreshRequests">Refresh</button><button class="button primary" data-page="create">＋ New request</button></div></div>
-        <article class="panel"><div class="table-toolbar"><input id="requestSearch" type="search" placeholder="Search clusters, teams, projects..."><select id="statusFilter"><option value="all">All statuses</option><option value="REQUESTED">Requested</option><option value="READY">Ready</option><option value="FAILED">Failed</option></select></div><div class="table-wrap"><table><thead><tr><th>Cluster</th><th>Environment</th><th>Owner</th><th>Blueprint</th><th>GPU</th><th>Status</th><th>Created</th></tr></thead><tbody id="requestTable"></tbody></table></div><div id="requestEmpty" class="empty-state hidden"><span>⬡</span><h3>No matching requests</h3><p>Change the filters or create a cluster request.</p></div></article>
+        <article class="panel"><div class="table-toolbar"><input id="requestSearch" type="search" placeholder="Search clusters, teams, projects..."><select id="statusFilter"><option value="all">All statuses</option><option value="REQUESTED">Requested</option><option value="READY">Ready</option><option value="FAILED">Failed</option></select></div><div class="table-wrap"><table><thead><tr><th>Cluster</th><th>Environment</th><th>Owner</th><th>Blueprint</th><th>GPU</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead><tbody id="requestTable"></tbody></table></div><div id="requestEmpty" class="empty-state hidden"><span>⬡</span><h3>No matching requests</h3><p>Change the filters or create a cluster request.</p></div></article>
       </section>
 
       <section id="page-architecture" class="page">
@@ -130,6 +130,12 @@
   </div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <dialog id="identityDialog"><form method="dialog"><h2>Local identity</h2><p>This header simulates the email normally supplied by IAP.</p><label>Email<input id="identityEmail" type="email" value="developer@example.com"></label><div class="dialog-actions"><button value="cancel" class="button secondary">Cancel</button><button value="save" id="saveIdentity" class="button primary">Save</button></div></form></dialog>
+  <dialog id="provisionDialog" class="provision-dialog">
+    <h2>Provisioning <span id="provisionClusterName"></span></h2>
+    <p id="provisionSubtitle" class="form-note">Running Terraform against Google Cloud. This can take 10–20 minutes.</p>
+    <pre id="provisionLog" class="provision-log"></pre>
+    <div class="dialog-actions"><button id="closeProvisionDialog" class="button secondary">Close</button></div>
+  </dialog>
   <script src="/static/app.js" defer></script>
 </body>
 </html>

@@ -22,6 +22,7 @@ from app.models import (
     ValidationResult,
     utc_now,
 )
+from app.provisioner import ProvisionJob, ProvisionManager
 from app.repository import LocalRequestRepository
 
 
@@ -45,6 +46,7 @@ class ClusterFactoryService:
                 default_branch=settings.github_default_branch,
                 api_url=settings.github_api_url,
             )
+        self.provisioner = ProvisionManager(settings, settings.root_dir)
 
     async def close(self) -> None:
         if self.github:
@@ -196,6 +198,24 @@ class ClusterFactoryService:
             pull_request_url=pull_request_url,
             resolved_network=resolved_network,
         )
+
+    def start_provision(self, name: str) -> ProvisionJob:
+        if self.github is not None:
+            raise RequestValidationError(
+                ["Local provisioning is only available in storage_mode=local"]
+            )
+        if not self.settings.enable_local_provisioning:
+            raise RequestValidationError(
+                ["Local provisioning is disabled. Set FACTORY_ENABLE_LOCAL_PROVISIONING=true in .env"]
+            )
+        request_path = self.local_repository.get_record_path(name)
+        if request_path is None:
+            raise RequestValidationError([f"No local request named {name} was found"])
+        return self.provisioner.start(name, request_path)
+
+    def provision_status(self, name: str) -> dict | None:
+        job = self.provisioner.get(name)
+        return job.snapshot() if job else None
 
     async def summaries(self) -> list[RequestSummary]:
         summaries: list[RequestSummary] = []
