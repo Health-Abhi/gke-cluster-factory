@@ -76,7 +76,7 @@ resolved:
     pod_range_name: pods-ancy-payments-ml-4d0c17
     service_range_name: svc-ancy-payments-ml-4d0c17
 status:
-  phase: REQUESTED
+  phase: FAILED
   conditions:
   - type: SchemaValid
     status: 'True'
@@ -84,3 +84,8 @@ status:
   - type: PolicyValid
     status: 'True'
     last_transition_time: '2026-08-08T22:14:32.540504Z'
+  - type: Reconciled
+    status: 'False'
+    last_transition_time: '2026-08-08T22:18:38.519875Z'
+    message: Reconciliation failed. Review the GitHub Actions run and cloud operation
+      logs.
