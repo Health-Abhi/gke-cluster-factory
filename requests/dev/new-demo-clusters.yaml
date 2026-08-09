@@ -76,7 +76,7 @@ resolved:
     pod_range_name: pods-new-demo-clusters-42fad3
     service_range_name: svc-new-demo-clusters-42fad3
 status:
-  phase: REQUESTED
+  phase: FAILED
   conditions:
   - type: SchemaValid
     status: 'True'
@@ -84,3 +84,8 @@ status:
   - type: PolicyValid
     status: 'True'
     last_transition_time: '2026-08-09T09:19:14.006671Z'
+  - type: Reconciled
+    status: 'False'
+    last_transition_time: '2026-08-09T09:22:13.645511Z'
+    message: Reconciliation failed. Review the GitHub Actions run and cloud operation
+      logs.
