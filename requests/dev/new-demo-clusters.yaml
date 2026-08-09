@@ -89,3 +89,7 @@ status:
     last_transition_time: '2026-08-09T09:22:13.645511Z'
     message: Reconciliation failed. Review the GitHub Actions run and cloud operation
       logs.
+  - type: Destroy
+    status: 'False'
+    last_transition_time: '2026-08-09T10:01:01.213668Z'
+    message: Destroy failed. Review the GitHub Actions run and cloud operation logs.
