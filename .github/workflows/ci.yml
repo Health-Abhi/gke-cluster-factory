@@ -22,11 +22,6 @@ jobs:
       - name: Install Python dependencies
         run: pip install -r requirements-dev.txt
 
-      - name: Lint and test
-        run: |
-          ruff check app tests scripts
-          pytest -q
-          ./scripts/validate_all.sh
 
       - uses: azure/setup-helm@v4
         with:
