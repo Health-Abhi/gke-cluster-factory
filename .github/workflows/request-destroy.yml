@@ -74,6 +74,8 @@ jobs:
           BILLING_ACCOUNT: ${{ vars.BILLING_ACCOUNT }}
           GKE_SECURITY_GROUP: ${{ vars.GKE_SECURITY_GROUP }}
           PLATFORM_ADMIN_GROUP: ${{ vars.PLATFORM_ADMIN_GROUP }}
+          IAM_PRINCIPAL_TYPE: ${{ vars.IAM_PRINCIPAL_TYPE }}
+          ENABLE_GOOGLE_GROUPS_RBAC: ${{ vars.ENABLE_GOOGLE_GROUPS_RBAC }}
           DELETE_MANAGED_PROJECT: ${{ inputs.delete_managed_project }}
         run: |
           set -euo pipefail
