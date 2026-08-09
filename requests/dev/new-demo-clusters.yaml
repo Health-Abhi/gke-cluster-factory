@@ -91,5 +91,5 @@ status:
       logs.
   - type: Destroy
     status: 'False'
-    last_transition_time: '2026-08-09T10:01:01.213668Z'
+    last_transition_time: '2026-08-09T10:03:49.800109Z'
     message: Destroy failed. Review the GitHub Actions run and cloud operation logs.
