@@ -22,7 +22,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: gke-cluster-factory-destroy
+  group: gke-cluster-factory-writes
   cancel-in-progress: false
 
 jobs:
@@ -133,7 +133,22 @@ jobs:
           fi
           git config user.name "gke-cluster-factory[bot]"
           git config user.email "gke-cluster-factory@users.noreply.github.com"
-          git add "$REQUEST_FILE"
-          git commit -m "chore: record cluster destruction [skip ci]"
-          git pull --rebase origin main
-          git push origin HEAD:main
+
+          git diff -- "$REQUEST_FILE" > /tmp/status.patch
+
+          attempt=0
+          until git fetch origin main \
+             && git reset --hard origin/main \
+             && git apply --3way /tmp/status.patch \
+             && git add "$REQUEST_FILE" \
+             && git commit -m "chore: record cluster destruction [skip ci]" \
+             && git push origin HEAD:main
+          do
+            attempt=$((attempt + 1))
+            if [[ $attempt -ge 5 ]]; then
+              echo "::error::Could not publish destruction status after $attempt attempts" >&2
+              exit 1
+            fi
+            echo "Push race detected, retrying (attempt $attempt)..." >&2
+            sleep $((attempt * 5))
+          done

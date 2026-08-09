@@ -21,7 +21,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: gke-cluster-factory-reconcile
+  group: gke-cluster-factory-writes
   cancel-in-progress: false
 
 jobs:
@@ -186,7 +186,26 @@ jobs:
           fi
           git config user.name "gke-cluster-factory[bot]"
           git config user.email "gke-cluster-factory@users.noreply.github.com"
-          git add requests
-          git commit -m "chore: update cluster reconciliation status [skip ci]"
-          git pull --rebase origin main
-          git push origin HEAD:main
+
+          # Preserve the status changes as a patch instead of a commit so we can
+          # re-apply them cleanly on top of whatever main looks like right now.
+          # Committing first and rebasing after (the old approach) fails hard if
+          # main moved in the meantime, since a rebase replays a fixed diff.
+          git diff -- requests > /tmp/status.patch
+
+          attempt=0
+          until git fetch origin main \
+             && git reset --hard origin/main \
+             && git apply --3way /tmp/status.patch \
+             && git add requests \
+             && git commit -m "chore: update cluster reconciliation status [skip ci]" \
+             && git push origin HEAD:main
+          do
+            attempt=$((attempt + 1))
+            if [[ $attempt -ge 5 ]]; then
+              echo "::error::Could not publish reconciliation status after $attempt attempts" >&2
+              exit 1
+            fi
+            echo "Push race detected, retrying (attempt $attempt)..." >&2
+            sleep $((attempt * 5))
+          done
