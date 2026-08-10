@@ -76,7 +76,7 @@ resolved:
     pod_range_name: pods-temp-cluster-gcp-b220e7
     service_range_name: svc-temp-cluster-gcp-b220e7
 status:
-  phase: REQUESTED
+  phase: READY
   conditions:
   - type: SchemaValid
     status: 'True'
@@ -84,3 +84,7 @@ status:
   - type: PolicyValid
     status: 'True'
     last_transition_time: '2026-08-10T11:42:59.775199Z'
+  - type: Reconciled
+    status: 'True'
+    last_transition_time: '2026-08-10T12:32:12.671723Z'
+    message: Infrastructure and GitOps baseline reconciled
